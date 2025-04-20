@@ -5,3 +5,4 @@ from .models import *
 
 admin.site.register(Form)
 admin.site.register(Field)
+admin.site.register(Response)

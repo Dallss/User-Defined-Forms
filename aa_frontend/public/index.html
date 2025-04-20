@@ -2,7 +2,8 @@
 <html>
 <head>
   <title>Dynamic Form</title>
-  <script src="../node_modules/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 </head>
 <body>
   <h1 id="form-title"></h1>
@@ -10,12 +11,10 @@
   <button type="submit" form="dynamic-form">Submit</button>
 
   <script>
-    // Replace with your actual API endpoint
-    const FORM_API_URL = 'http://localhost:8000/api/forms/1/';
+    const FORM_API_URL = 'http://127.0.0.1:8000/api/forms/1/';
 
     axios.get(FORM_API_URL)
       .then(response => {
-        console.log(response.data)
         const form = response.data;
         document.getElementById('form-title').textContent = form.title;
 
@@ -32,11 +31,17 @@
           let input;
           if (field.type === 'select') {
             input = document.createElement('select');
-            // Placeholder example option; normally you'd get options from API
-            const option = document.createElement('option');
-            option.value = '';
-            option.text = '-- Select --';
-            input.appendChild(option);
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.text = '-- Select --';
+            input.appendChild(defaultOption);
+
+            (field.options || []).forEach(opt => {
+              const option = document.createElement('option');
+              option.value = opt;
+              option.text = opt;
+              input.appendChild(option);
+            });
           } else {
             input = document.createElement('input');
             input.type = field.type;
@@ -45,7 +50,7 @@
           }
 
           input.id = `field-${field.id}`;
-          input.name = field.label;
+          input.name = `field_${field.id}`;
           input.required = field.required;
 
           wrapper.appendChild(input);
@@ -55,6 +60,20 @@
       .catch(error => {
         console.error('Failed to fetch form:', error);
       });
+
+    document.getElementById('dynamic-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const payload = {};
+      for (const [key, value] of formData.entries()) {
+        payload[key] = value;
+      }
+      console.log('Form submitted:', payload);
+
+      axios.post('http://localhost:8000/api/forms/1/post-response/', payload)
+        .then(res => console.log('Submitted successfully', res.data))
+        .catch(err => console.error('Submission error', err));
+    });
   </script>
 </body>
 </html>

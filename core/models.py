@@ -11,18 +11,16 @@ TYPES = [
 ]
 
 class Form(models.Model):
-    title = models.CharField()
+    title = models.CharField(max_length=100)
     created_on = models.DateField(auto_now_add=True)
 
 class Field(models.Model):
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name='fields')
-    label = models.CharField()
+    label = models.CharField(max_length=100, null=True)
     type = models.CharField(max_length=10, choices=TYPES)
     required = models.BooleanField(default=True)
-
-    regex_validation = models.CharField(blank=True, null=True)
-
-    placeholder = models.CharField()
+    regex_validation = models.CharField(max_length=100, blank=True, null=True)
+    placeholder = models.CharField(max_length=100, null=True)
 
 class Response(models.Model):
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name='responses')
