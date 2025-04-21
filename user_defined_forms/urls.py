@@ -24,5 +24,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/forms/', get_forms, name='get_form'),
     path('api/forms/<int:form_id>/', get_form, name='get_form'),
+    path('api/forms/<int:form_id>/responses', get_form_responses, name='get_form'),
     path('api/forms/<int:form_id>/post-response/', post_response, name='post_rsponse')
 ]

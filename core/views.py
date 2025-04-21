@@ -1,6 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from .models import Form, Response
+from django.core.serializers import serialize
 import json
 
 def get_forms(request):
@@ -37,6 +38,29 @@ def get_form(request, form_id):
     }
 
     return JsonResponse(data)
+
+from django.http import JsonResponse, HttpResponseBadRequest
+
+def get_form_responses(request, form_id):
+    try:
+        # Retrieve the form object
+        cur_form = Form.objects.get(id=form_id)
+        # Retrieve responses related to the form (use filter() for multiple responses)
+        responses = Response.objects.filter(form=cur_form)
+        
+        # Serialize the queryset of responses
+        response_data = []
+        for response in responses:
+            response_data.append(
+                response.response
+            )
+
+        # Return a JsonResponse with serialized data
+        return JsonResponse(response_data, safe=False)
+
+    except Form.DoesNotExist:
+        return HttpResponseBadRequest("Form not found")
+
 
 @csrf_exempt
 def post_response(request, form_id):
