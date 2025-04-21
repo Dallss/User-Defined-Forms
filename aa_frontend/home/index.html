@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Forms List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .form-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .form-card:hover {
+      background-color: #f0f0f0;
+    }
+    .form-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .created-on {
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Available Forms</h1>
+  <div id="forms-container"></div>
+
+  <script>
+    async function fetchForms() {
+      const res = await fetch('http://127.0.0.1:8000/api/forms/');
+      const forms = await res.json();
+
+      const container = document.getElementById('forms-container');
+
+      forms.forEach(form => {
+        const div = document.createElement('div');
+        div.className = 'form-card';
+        div.onclick = () => {
+          window.location.href = `/form/${form.id}`;
+        };
+
+        div.innerHTML = `
+          <div class="form-title">${form.title}</div>
+          <div class="created-on">Created on: ${new Date(form.created_on).toLocaleDateString()}</div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    fetchForms();
+  </script>
+</body>
+</html>
